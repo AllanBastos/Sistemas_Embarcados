@@ -10,17 +10,19 @@ import { RequestService } from './service/request.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  public temperatura = 0;
-  public luminosidade = 0;
-  public humidade = 0;
-  public Estado_lampada = 0;
   
   idInterval: any;
   
   constructor(private server: RequestService, ){}
-
+  
   title = 'estufa-app';
-
+  
+  temperatura = 0;
+  luminosidade = 0;
+  humidade = 0;
+  estado_lampada = 0;
+  estado_cooler = 0;
+  
   minLumens = '0';
 	maxLumens = '0';
 	maxTemperatura = '0';
@@ -40,7 +42,12 @@ export class AppComponent implements OnInit{
   }
   cardLampadaEstado = {
     title: 'Lampada',
-    info: this.Estado_lampada == 1 ? 'Ligada' : 'Desligada' 
+    info: this.estado_lampada == 1 ? 'Ligada' : 'Desligada' 
+  }
+
+  cardCoolerEstado = {
+    title: 'Cooler',
+    info: this.estado_cooler == 1 ? 'Ligado' : 'Desligado' 
   }
 
   
@@ -50,16 +57,19 @@ export class AppComponent implements OnInit{
       clearInterval(this.idInterval);
     }
 
+    this.getParams();
+
     this.server.getInfo().subscribe( (response) => {
       this.temperatura = response.temperatura;
       this.luminosidade = response.luminosidade;
       this.humidade = response.humidade;
-      this.Estado_lampada = response.lampada;
+      this.estado_lampada = response.lampada;
+      this.estado_cooler = response.cooler;
     }, (erro: HttpErrorResponse) => {
       console.log(erro);
     });
     this.atualizarCard();
-    this.idInterval = setInterval(() => {this.atualizarInfo(); }, 5 * 1000)
+    this.idInterval = setInterval(() => {this.atualizarInfo(); }, 10 * 1000)
 
   }
 
@@ -68,7 +78,10 @@ export class AppComponent implements OnInit{
     console.log(post);
     this.server.postParam(post);
 
-    this.getParams();
+
+    setTimeout( () => {
+      this.atualizarInfo();
+    }, 2000);
 
   }
 
@@ -77,7 +90,8 @@ export class AppComponent implements OnInit{
     this.cardTemperatura.info = this.temperatura + 'C°';
     this.cardHumidade.info = this.humidade + '%' ;
     this.cardLuminosidade.info = this.luminosidade + ' Lux';
-    this.cardLampadaEstado.info = this.Estado_lampada == 1 ? 'Ligada' : 'Desligada' ;
+    this.cardLampadaEstado.info = this.estado_lampada == 1 ? 'Ligada' : 'Desligada' ;
+    this.cardCoolerEstado.info = this.estado_cooler == 1 ? 'Ligado' : 'Desligado' ;
   }
 
 

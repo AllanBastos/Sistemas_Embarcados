@@ -20,18 +20,18 @@ extern float humidade;
 extern float temperatura;
 extern int luminosidade;
 extern int estado_lampada;
+extern int estado_cooler;
 
 extern int min_lumens;
 extern int max_lumens;
 extern float max_temperatura;
 extern float min_temperatura;
 
-
 /* An HTTP GET handler */
 static esp_err_t info_get_handler(httpd_req_t *req)
 {
     char resp_str[150];
-    sprintf(resp_str, "{ \"temperatura\": %.2f , \"humidade\": %.2f, \"luminosidade\": %d, \"lampada\": %d } ", temperatura, humidade, luminosidade, estado_lampada);
+    sprintf(resp_str, "{ \"temperatura\": %.2f , \"humidade\": %.2f, \"luminosidade\": %d, \"lampada\": %d, \"cooler\": %d } ", temperatura, humidade, luminosidade, estado_lampada, estado_cooler);
     httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
     httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
     if (httpd_req_get_hdr_value_len(req, "Host") == 0) {

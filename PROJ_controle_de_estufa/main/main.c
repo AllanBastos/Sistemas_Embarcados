@@ -24,7 +24,9 @@ float humidade = 0;
 float temperatura = 0;
 int luminosidade = 0;
 int estado_lampada = 0;
+int estado_cooler = 0;
 int estado_lampada_anterior = 0;
+int estado_cooler_anterior = 0;
 
 int min_lumens = 50;
 int max_lumens = 60;
@@ -49,9 +51,9 @@ void analizarParametros(){
     }
 
     if(temperatura > max_temperatura){
-        setCooler(cooler, 1);
+        estado_cooler = 1;
     }else if(temperatura < min_temperatura){
-        setCooler(cooler, 0);
+        estado_cooler = 0;
     }
 }
 
@@ -72,6 +74,12 @@ void app_main(void)
             setLampada(lampada, estado_lampada);
             estado_lampada_anterior = estado_lampada;
         }
+
+        if(estado_cooler != estado_cooler_anterior){
+            setCooler(cooler, estado_cooler);
+            estado_cooler_anterior = estado_cooler;
+        }
+        delay(500);
         
         printf("Params minLumens = %d  maxLumens = %d, minTemp = %.2f  maxTemp = %.2f\n", min_lumens, max_lumens, min_temperatura, max_temperatura);
     }

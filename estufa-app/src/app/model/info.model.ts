@@ -3,4 +3,5 @@ export interface InfoModel {
 	humidade: number;
 	luminosidade: number;
 	lampada: number;
+	cooler: number;
 }
