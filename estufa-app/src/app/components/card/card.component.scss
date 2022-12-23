@@ -1,0 +1,33 @@
+
+.card{
+    align-items:  stretch;
+    background-color: white;
+    border-radius: .25rem;
+    border: .0625rem solid #d6d0d6CC;
+    min-height: 3rem;
+    min-width: 16.5rem;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-flex;
+    margin: 8px;
+}
+
+.title{
+    background-color: #FAF7F5;
+    min-width: 9.5rem;
+    h4{
+        display: flex;
+        text-align: center;
+        padding: .75rem 1rem;
+    }
+}
+
+.body{
+    margin-left: auto;
+    margin-right: auto;
+    padding: .75rem 1rem;
+    align-items: center;
+    h3{
+        color: rgb(0, 180, 252);
+    }
+}
