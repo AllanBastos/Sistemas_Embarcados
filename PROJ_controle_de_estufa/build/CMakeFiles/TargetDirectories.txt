@@ -689,6 +689,13 @@ D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/dht/CMakeFiles/install.dir
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/dht/CMakeFiles/install/local.dir
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/dht/CMakeFiles/install/strip.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/__idf_lampada_ctrl.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/edit_cache.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/rebuild_cache.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/list_install_components.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/install.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/install/local.dir
+D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/lampada_ctrl/CMakeFiles/install/strip.dir
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/ldr_lux/CMakeFiles/__idf_ldr_lux.dir
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/ldr_lux/CMakeFiles/edit_cache.dir
 D:/Documents/Faculdade/Sistemas_Embarcados/PROJ_controle_de_estufa/build/esp-idf/ldr_lux/CMakeFiles/rebuild_cache.dir

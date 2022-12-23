@@ -18,7 +18,7 @@ static const char *TAG = "LDR_LUX";
 
 static const int MAX_ADC_READING = 4095;
 static const int ADC_REF_VOLTAGE = 5;
-static const int REF_RESISTANCE = 7645;
+static const int REF_RESISTANCE = 13050;
 static const int LUX_CALC_SCALAR = 12518931 ;
 static const int LUX_CALC_EXPONENT = -1.405;
 
@@ -39,10 +39,10 @@ void calcular_lux(int raw, int *lux){
 }
 
 void get_lux(int *lux){
-    
+    ldr_lux_setup();
     int raw_value = adc1_get_raw(LDR);
     calcular_lux(raw_value, lux);
-    ESP_LOGI(TAG, "Valor lido: %d |\t V: %.2f |\t lux: %d", raw_value, (raw_value/4095.0) * 5.0, *lux);
+    ESP_LOGI(TAG, "Valor lido: %d |\t V: %.2f |\t lux: %d", raw_value, (raw_value/4095.0) * 5, *lux);
     delay(2);
 
 }

@@ -62,3 +62,5 @@ aio/content/examples/.DS_Store
 PROJ_controle_de_estufa/build/*
 
 esp-idf-lib-master/*
+
+Atividades/*

@@ -8,7 +8,7 @@
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32.cfg"
     ],
-    "idf.portWin": "COM5",
+    "idf.portWin": "COM4",
     "idf.pythonBinPathWin": "C:\\Users\\allan\\.espressif\\python_env\\idf4.4_py3.8_env\\Scripts\\python.exe",
     "idf.toolsPathWin": "C:\\Users\\allan\\.espressif",
     "files.associations": {
@@ -46,7 +46,12 @@
         "type_traits": "c",
         "cmath": "c",
         "complex": "c",
-        "esp_adc_cal.h": "c"
+        "esp_adc_cal.h": "c",
+        "lampada_ctrl.h": "c",
+        "esp_spi_flash.h": "c",
+        "json.h": "c",
+        "cjson.h": "c",
+        "cstdlib": "c"
     },
     "idf.flashType": "UART"
 }

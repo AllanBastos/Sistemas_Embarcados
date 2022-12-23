@@ -12,6 +12,7 @@
 #include <esp_http_server.h>
 #include "protocol_examples_common.h"
 #include "esp_spi_flash.h"
+#include <string.h>
 
 static const char *TAG = "server";
 
@@ -20,14 +21,19 @@ extern float temperatura;
 extern int luminosidade;
 extern int estado_lampada;
 
+extern int min_lumens;
+extern int max_lumens;
+extern float max_temperatura;
+extern float min_temperatura;
+
 
 /* An HTTP GET handler */
 static esp_err_t info_get_handler(httpd_req_t *req)
 {
     char resp_str[150];
     sprintf(resp_str, "{ \"temperatura\": %.2f , \"humidade\": %.2f, \"luminosidade\": %d, \"lampada\": %d } ", temperatura, humidade, luminosidade, estado_lampada);
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
     httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
-
     if (httpd_req_get_hdr_value_len(req, "Host") == 0) {
         ESP_LOGI(TAG, "Request headers lost");
     }
@@ -40,11 +46,31 @@ static const httpd_uri_t info = {
     .handler   = info_get_handler,
 };
 
+/* An HTTP GET handler */
+static esp_err_t params_get_handler(httpd_req_t *req)
+{
+    char resp_str[150];
+    sprintf(resp_str, "{ \"min_lumens\": %d , \"max_lumens\": %d, \"max_temperatura\": %.2f, \"min_temperatura\": %.2f } ", min_lumens, max_lumens, max_temperatura, min_temperatura);
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
+    httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
+    if (httpd_req_get_hdr_value_len(req, "Host") == 0) {
+        ESP_LOGI(TAG, "Request headers lost");
+    }
+    return ESP_OK;
+}
+
+static const httpd_uri_t get_params = {
+    .uri       = "/params",
+    .method    = HTTP_GET,
+    .handler   = params_get_handler,
+};
+
 /* An HTTP POST handler */
-static esp_err_t echo_post_handler(httpd_req_t *req)
+static esp_err_t params_post_handler(httpd_req_t *req)
 {
     char buf[100];
     int ret, remaining = req->content_len;
+    httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
 
     while (remaining > 0) {
         /* Read the data for the request */
@@ -56,26 +82,35 @@ static esp_err_t echo_post_handler(httpd_req_t *req)
             }
             return ESP_FAIL;
         }
-
         /* Send back the same data */
         httpd_resp_send_chunk(req, buf, ret);
         remaining -= ret;
-
+        
         /* Log data received */
         ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
         ESP_LOGI(TAG, "%.*s", ret, buf);
         ESP_LOGI(TAG, "====================================");
     }
 
+    char* t;
+    t = strtok(buf,",");
+    min_lumens = (int) atoll(t);
+    t=strtok(NULL, ",");
+    max_lumens = (int) atoll(t);
+    t=strtok(NULL, ",");
+    min_temperatura = (float) atoll(t);
+    t=strtok(NULL, ",");
+    max_temperatura = (float) atoll(t);
+    
     // End response
     httpd_resp_send_chunk(req, NULL, 0);
     return ESP_OK;
 }
 
-static const httpd_uri_t echo = {
-    .uri       = "/echo",
+static const httpd_uri_t params = {
+    .uri       = "/params",
     .method    = HTTP_POST,
-    .handler   = echo_post_handler,
+    .handler   = params_post_handler,
     .user_ctx  = NULL
 };
 
@@ -93,11 +128,11 @@ static const httpd_uri_t echo = {
 esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
 {
     if (strcmp("/info", req->uri) == 0) {
-        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/hello URI is not available");
+        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/info URI is not available");
         /* Return ESP_OK to keep underlying socket open */
         return ESP_OK;
-    } else if (strcmp("/echo", req->uri) == 0) {
-        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/echo URI is not available");
+    } else if (strcmp("/params", req->uri) == 0) {
+        httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "/params URI is not available");
         /* Return ESP_FAIL to close underlying socket */
         return ESP_FAIL;
     }
@@ -105,49 +140,6 @@ esp_err_t http_404_error_handler(httpd_req_t *req, httpd_err_code_t err)
     httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "Some 404 error message");
     return ESP_FAIL;
 }
-
-/* An HTTP PUT handler. This demonstrates realtime
- * registration and deregistration of URI handlers
- */
-static esp_err_t ctrl_put_handler(httpd_req_t *req)
-{
-    char buf;
-    int ret;
-
-    if ((ret = httpd_req_recv(req, &buf, 1)) <= 0) {
-        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
-            httpd_resp_send_408(req);
-        }
-        return ESP_FAIL;
-    }
-
-    if (buf == '0') {
-        /* URI handlers can be unregistered using the uri string */
-        ESP_LOGI(TAG, "Unregistering /hello and /echo URIs");
-        httpd_unregister_uri(req->handle, "/info");
-        httpd_unregister_uri(req->handle, "/echo");
-        /* Register the custom error handler */
-        httpd_register_err_handler(req->handle, HTTPD_404_NOT_FOUND, http_404_error_handler);
-    }
-    else {
-        ESP_LOGI(TAG, "Registering /hello and /echo URIs");
-        httpd_register_uri_handler(req->handle, &info);
-        httpd_register_uri_handler(req->handle, &echo);
-        /* Unregister custom error handler */
-        httpd_register_err_handler(req->handle, HTTPD_404_NOT_FOUND, NULL);
-    }
-
-    /* Respond with empty body */
-    httpd_resp_send(req, NULL, 0);
-    return ESP_OK;
-}
-
-static const httpd_uri_t ctrl = {
-    .uri       = "/ctrl",
-    .method    = HTTP_PUT,
-    .handler   = ctrl_put_handler,
-    .user_ctx  = NULL
-};
 
 static httpd_handle_t start_webserver(void)
 {   
@@ -162,8 +154,8 @@ static httpd_handle_t start_webserver(void)
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
         httpd_register_uri_handler(server, &info);
-        httpd_register_uri_handler(server, &echo);
-        httpd_register_uri_handler(server, &ctrl);
+        httpd_register_uri_handler(server, &params);
+        httpd_register_uri_handler(server, &get_params);
         #if CONFIG_EXAMPLE_BASIC_AUTH
         httpd_register_basic_auth(server);
         #endif
@@ -208,7 +200,7 @@ void server_init(){
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-
+    
     ESP_ERROR_CHECK(example_connect());
 
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &connect_handler, &server));
